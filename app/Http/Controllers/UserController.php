@@ -5,9 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UserRequest;
 
 class UserController extends Controller
 {
+    public function create()
+    {
+        return view('user.create');
+    }
+
+    public function store(UserRequest $request)
+    {
+        User::create([
+            'name'=>$request->name,
+            'email'=>$request->email,
+            'password'=>bcrypt($request->password)
+        ]);
+
+        return redirect()->route('login');
+    }
+
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([

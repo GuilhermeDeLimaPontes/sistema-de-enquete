@@ -3,6 +3,7 @@
 use App\Http\Controllers\PollController;
 use App\Http\Controllers\UserController;
 use App\Models\Poll;
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'login')->name('login');
 Route::post('users/authenticate', [UserController::class, 'authenticate'])->name('users.do.authenticate');
+Route::get('users/create', [UserController::class,'create'])->name('users.create');
+Route::post('users/store',[UserController::class, 'store'])->name('users.store');
 
 Route::get('poll/{poll}/{slug}/vote',[PollController::class,'showPollToVote'])->name('show.poll.to.vote');
 Route::post('poll/sumvote', [PollController::class, 'sumVote'])->name('poll.sum.vote');

@@ -25,7 +25,7 @@ class PollRequest extends FormRequest
     {
         return [
             'title'=>['required','max:255'],
-            'answers'=>['array','min:2','required'],
+            'answers'=>['array','min:2','max:10','required'],
             'answers.*'=>['required']
         ];
     }

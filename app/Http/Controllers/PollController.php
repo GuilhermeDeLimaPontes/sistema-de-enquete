@@ -14,23 +14,22 @@ class PollController extends Controller
 {
     public function sumVote(Request $request)
     {
-       $request->validate(['name'=>'required|integer']);
-       Answer::where('id',$request->name)->firstOrFail()->increment('total_votes');
+        $request->validate(['name' => 'required|integer']);
+        Answer::where('id', $request->name)->firstOrFail()->increment('total_votes');
 
-       return back()->with('success','Voto Computado Com Sucesso');
+        return back()->with('success', 'Voto Computado Com Sucesso');
     }
 
     public function showPollToVote($poll)
     {
         $poll = Poll::findOrFail($poll);
         $pollAnswers = $poll->answers()->get();
-        $votes = Answer::where('poll_id',$poll->id)->sum('total_votes');
+        $votes = Answer::where('poll_id', $poll->id)->sum('total_votes');
 
-        if($pollAnswers)
+        if ($pollAnswers)
         {
-            return view('poll',['pollTitle'=>$poll->title, 'pollAnswers'=>$pollAnswers,'numberOfResponses' => count($pollAnswers),'votes'=>$votes]);
+            return view('poll', ['pollTitle' => $poll->title, 'pollAnswers' => $pollAnswers, 'numberOfResponses' => count($pollAnswers), 'votes' => $votes]);
         }
-       
     }
     /**
      * Show the form for creating a new resource.
@@ -52,7 +51,7 @@ class PollController extends Controller
     {
         $propertySlug = $this->setName($request->title);
 
-        $poll = Poll::create(['title' => $request->title,'slug' => $propertySlug, 'user_id' => Auth::user()->id]);
+        $poll = Poll::create(['title' => Str::title($request->title), 'slug' => $propertySlug, 'user_id' => Auth::user()->id]);
 
         $pollId = $poll->id;
 
@@ -60,7 +59,7 @@ class PollController extends Controller
 
         for ($i = 0; $i < $numberOfResponses; $i++)
         {
-            $answer = Answer::create(['name' => $request->answers[$i],'total_votes' => 0,'poll_id' => $pollId ]);
+            $answer = Answer::create(['name' => $request->answers[$i], 'total_votes' => 0, 'poll_id' => $pollId]);
         }
 
         return redirect()->route('users.index');
@@ -76,15 +75,17 @@ class PollController extends Controller
     {
         $poll = Poll::findOrFail($poll);
         $pollAnswers = $poll->answers()->get();
-        $votes = Answer::where('poll_id',$poll->id)->sum('total_votes');
+        $votes = Answer::where('poll_id', $poll->id)->sum('total_votes');
 
-        if ($pollAnswers) 
+        if ($pollAnswers)
         {
-            return view('show', [
-                'pollAnswers' => $pollAnswers, 
-                'pollTitle' => $poll->title, 
+            return view('show', 
+            [
+                'pollAnswers' => $pollAnswers,
+                'pollTitle' => $poll->title,
                 'numberOfResponses' => count($pollAnswers),
-                'votes'=>$votes]);
+                'votes' => $votes
+            ]);
         }
     }
 
@@ -100,11 +101,11 @@ class PollController extends Controller
 
         $pollAnswers = $poll->answers()->get();
 
-        if ($pollAnswers) 
+        if ($pollAnswers)
         {
             $pollTitle = $poll->title;
 
-            return view('edit', ['id'=>$poll->id, 'pollAnswers' => $pollAnswers, 'pollTitle' => $pollTitle, 'numberOfResponses' => count($pollAnswers)]);
+            return view('edit', ['id' => $poll->id, 'pollAnswers' => $pollAnswers, 'pollTitle' => $pollTitle, 'numberOfResponses' => count($pollAnswers)]);
         }
     }
 
@@ -118,20 +119,23 @@ class PollController extends Controller
     public function update(Request $request, $id)
     {
         $poll = Poll::findOrFail($id);
-
-        $poll->title = $request->title;
+        $request->validate(['title'=>'required']);
+    
+        $poll->title = $request->title; 
         $poll->slug  = $this->setName($request->title);
         
-        $collections = collect($request);
-        $slice = $collections->slice(3);
+        $slice = collect($request)->slice(3);
 
-        foreach ($slice as $key => $value) 
+        if(in_array(null,$slice->toArray()))
         {
-           Answer::where('id',$key)->update(['name'=>$value]);
+            return back()->withErrors(['error'=>'Preencha todos os campos']);
+        }
+
+        foreach ($slice as $key => $value){
+            Answer::where('id', $key)->update(['name' => $value]);
         }
 
         $poll->save();
-
         return redirect()->route('users.index');
     }
 
@@ -143,8 +147,8 @@ class PollController extends Controller
      */
     public function destroy($poll)
     {
-       Poll::destroy($poll);
-       return redirect()->route('users.index');
+        Poll::destroy($poll);
+        return redirect()->route('users.index');
     }
 
     private function setName($title)
@@ -154,13 +158,16 @@ class PollController extends Controller
         $properties = Poll::all();
 
         $t = 0;
-        foreach ($properties as $property) {
-            if (Str::slug($property->title) === $propertySlug) {
+        foreach ($properties as $property) 
+        {
+            if (Str::slug($property->title) === $propertySlug)
+            {
                 $t++;
             }
         }
 
-        if ($t > 0) {
+        if ($t > 0)
+        {
             $propertySlug = $propertySlug . '-' . $t;
         }
         return $propertySlug;

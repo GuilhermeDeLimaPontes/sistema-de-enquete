@@ -34,27 +34,29 @@
 <body class="text-center">
     <main class="form-signin">
         @if ($errors->any())
-            <div class="alert alert-danger">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </div>
-        @endif
-        <form action="{{ route('users.do.authenticate') }}" method="POST">
-            @csrf
-            
-            <img class="mb-4" src="{{ url('assets/brand/bootstrap-logo.svg') }}" alt="" width="72" height="57">
-            <h1 class="h3 mb-3 fw-normal">Sistema de Enquete</h1>
+        <div class="alert alert-danger">
+            @foreach ($errors->all() as $error )
+                <li>{{ $error }}</li>
+            @endforeach
+        </div>
+    @endif
+        <form action="{{ route('users.store') }}" method="POST">
+          @csrf
+           <a href="{{ route('login') }}"><img class="mb-4" src="{{ url('assets/brand/bootstrap-logo.svg') }}" alt="" width="72" height="57"></a> 
+            <h1 class="h3 mb-3 fw-normal">Cadastro de Usuario</h1>
             <div class="form-floating">
-                <input type="email" class="form-control" name="email" placeholder="Digite um email" value="{{ old('email') }}">
+                <input type="text" class="form-control" name="name" placeholder="Digite um nome" value="{{ old('name') }}">
+                <label for="name">Nome</label>
+            </div>
+            <div class="form-floating">
+                <input type="email" class="form-control" name="email" placeholder="Digite um email" value="{{ old('email') }}" >
                 <label for="email">Email</label>
             </div>
             <div class="form-floating">
                 <input type="password" class="form-control" name="password" placeholder="Senha">
                 <label for="password">Senha</label>
             </div>
-            <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Criar Conta</a>
-            <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">Cadastrar</button>
             <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
         </form>
     </main>
