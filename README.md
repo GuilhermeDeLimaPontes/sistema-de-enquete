@@ -1,3 +1,14 @@
+## Credenciais
+  - Link do Sistema Online: https://sistema-de-enquete.000webhostapp.com/
+  - Login: admin@admin.com
+  - Senha: admin
+
+## Como Usar
+ - Clone o Repositório
+ - Copie o arquivo .env.example para .env e edite as credenciais do banco
+ - Rode php artisan key:generate
+ - Rode php artisan migrate --seed(para criar um usuário)
+
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
 <p align="center">
