@@ -8,6 +8,7 @@ use App\Http\Requests\PollRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Gate;
 
 
 class PollController extends Controller
@@ -71,9 +72,10 @@ class PollController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($poll)
+    public function show(Poll $poll)
     {
-        $poll = Poll::findOrFail($poll);
+        $this->authorize('poll.show.or.edit.or.delete', $poll);
+        $poll = Poll::findOrFail($poll->id);
         $pollAnswers = $poll->answers()->get();
         $votes = Answer::where('poll_id', $poll->id)->sum('total_votes');
 
@@ -95,9 +97,11 @@ class PollController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($poll)
+    public function edit(Poll $poll)
     {
-        $poll = Poll::findOrFail($poll);
+        $this->authorize('poll.show.or.edit.or.delete', $poll);
+
+        $poll = Poll::findOrFail($poll->id);
 
         $pollAnswers = $poll->answers()->get();
 
@@ -116,9 +120,9 @@ class PollController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Poll $poll)
     {
-        $poll = Poll::findOrFail($id);
+        $poll = Poll::findOrFail($poll->id);
         $request->validate(['title'=>'required']);
     
         $poll->title = $request->title; 
@@ -145,9 +149,10 @@ class PollController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($poll)
+    public function destroy(Poll $poll)
     {
-        Poll::destroy($poll);
+        $this->authorize('poll.show.or.edit.or.delete', $poll);
+        Poll::destroy($poll->id);
         return redirect()->route('users.index');
     }
 
